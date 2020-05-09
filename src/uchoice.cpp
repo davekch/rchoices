@@ -48,10 +48,10 @@ struct Uchoice : Module {
 		NUM_LIGHTS
 	};
 
-	int current = 0;
+	int current;
 	Chooser chooser = Chooser();
 	dsp::SchmittTrigger newInputTrigger;
-	bool selected[NUM_PARAMS] = {true, true, true, true, true, true, true};
+	bool selected[NUM_PARAMS];
 	dsp::SchmittTrigger buttonTriggers[NUM_PARAMS];
 
 	Uchoice() {
@@ -63,6 +63,37 @@ struct Uchoice : Module {
 		configParam(BUTTON5_PARAM, 0.f, 1.f, 0.f);
 		configParam(BUTTON6_PARAM, 0.f, 1.f, 0.f);
 		configParam(BUTTON7_PARAM, 0.f, 1.f, 0.f);
+
+		for (int i=0; i<NUM_PARAMS; i++) {
+			selected[i] = true;
+		}
+		current = 0;
+	}
+
+	json_t* dataToJson() override {
+		// save the state of the module
+		json_t* data = json_object();
+		json_object_set_new(data, "current", json_integer(current));
+		json_t* selected_json = json_array();
+		for (int i=0; i<NUM_PARAMS; i++) {
+			json_array_insert_new(selected_json, i, json_boolean(selected[i]));
+		}
+		json_object_set_new(data, "selected", selected_json);
+		return data;
+	}
+
+	void dataFromJson(json_t* data) override {
+		json_t* current_json = json_object_get(data, "current");
+		if (current_json)
+			current = json_is_true(current_json);
+		json_t* selected_json = json_object_get(data, "selected");
+		if (selected_json) {
+			for (int i=0; i<NUM_PARAMS; i++) {
+				json_t* sel = json_array_get(selected_json, i);
+				if (sel)
+					selected[i] = json_is_true(sel);
+			}
+		}
 	}
 
 	void process(const ProcessArgs& args) override {
