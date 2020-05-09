@@ -1,0 +1,25 @@
+{
+  "slug": "rchoices",
+  "name": "rchoices",
+  "version": "1.0.0",
+  "license": "GPL-3.0",
+  "brand": "rchoices",
+  "author": "David Koch",
+  "authorEmail": "dave-koch@web.de",
+  "authorUrl": "",
+  "pluginUrl": "",
+  "manualUrl": "",
+  "sourceUrl": "",
+  "donateUrl": "",
+  "changelogUrl": "",
+  "modules": [
+    {
+      "slug": "uchoice",
+      "name": "uchoice",
+      "description": "randomly select from inputs",
+      "tags": [
+        "random"
+      ]
+    }
+  ]
+}
