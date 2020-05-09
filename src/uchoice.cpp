@@ -1,9 +1,11 @@
 #include "plugin.hpp"
+#include "utility.hpp"
 
 
 struct Uchoice : Module {
 
 	int current = 0;
+	Chooser chooser = Chooser();
 	dsp::SchmittTrigger newInputTrigger;
 
 	enum ParamIds {
@@ -54,13 +56,18 @@ struct Uchoice : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
+		// collect all active inputs (for now, all of them)
+		std::vector<int> active;
+		for (int i=0; i<7; i++) {
+			active.push_back(i);
+		}
 		// calculate trigger value according to https://vcvrack.com/manual/VoltageStandards#triggers-and-gates
 		float trig = rescale(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f, 0.f, 1.f);
 		if (newInputTrigger.process(trig)) {
 			// turn the current light off
 			lights[current].setBrightness(0.f);
 			// update the selected input source
-			current = (current + 1) % 7;
+			current = chooser.random_uniform_choice(&active);
 			// turn led for new input on
 			lights[current].setBrightness(1.f);
 		}
