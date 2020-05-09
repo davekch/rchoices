@@ -7,6 +7,13 @@ struct Uchoice : Module {
 	dsp::SchmittTrigger newInputTrigger;
 
 	enum ParamIds {
+		BUTTON1_PARAM,
+		BUTTON2_PARAM,
+		BUTTON3_PARAM,
+		BUTTON4_PARAM,
+		BUTTON5_PARAM,
+		BUTTON6_PARAM,
+		BUTTON7_PARAM,
 		NUM_PARAMS
 	};
 	enum InputIds {
@@ -25,11 +32,25 @@ struct Uchoice : Module {
 		NUM_OUTPUTS
 	};
 	enum LightIds {
+		LED1_LIGHT,
+		LED2_LIGHT,
+		LED3_LIGHT,
+		LED4_LIGHT,
+		LED5_LIGHT,
+		LED6_LIGHT,
+		LED7_LIGHT,
 		NUM_LIGHTS
 	};
 
 	Uchoice() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
+		configParam(BUTTON1_PARAM, 0.f, 1.f, 0.f, "");
+		configParam(BUTTON2_PARAM, 0.f, 1.f, 0.f, "");
+		configParam(BUTTON3_PARAM, 0.f, 1.f, 0.f, "");
+		configParam(BUTTON4_PARAM, 0.f, 1.f, 0.f, "");
+		configParam(BUTTON5_PARAM, 0.f, 1.f, 0.f, "");
+		configParam(BUTTON6_PARAM, 0.f, 1.f, 0.f, "");
+		configParam(BUTTON7_PARAM, 0.f, 1.f, 0.f, "");
 	}
 
 	void process(const ProcessArgs& args) override {
@@ -51,16 +72,32 @@ struct UchoiceWidget : ModuleWidget {
 		addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.3, 21.624)), module, Uchoice::IN1_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.206, 33.481)), module, Uchoice::IN2_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.276, 46.675)), module, Uchoice::IN3_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.276, 59.897)), module, Uchoice::IN4_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.276, 73.504)), module, Uchoice::IN5_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.276, 87.301)), module, Uchoice::IN6_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.276, 100.813)), module, Uchoice::IN7_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(7.371, 115.554)), module, Uchoice::TRIG_INPUT));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 19.076)), module, Uchoice::BUTTON1_PARAM));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 31.675)), module, Uchoice::BUTTON2_PARAM));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 44.274)), module, Uchoice::BUTTON3_PARAM));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 56.874)), module, Uchoice::BUTTON4_PARAM));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 69.473)), module, Uchoice::BUTTON5_PARAM));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 82.072)), module, Uchoice::BUTTON6_PARAM));
+		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 94.671)), module, Uchoice::BUTTON7_PARAM));
 
-		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(22.894, 115.516)), module, Uchoice::OUT_OUTPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 19.076)), module, Uchoice::IN1_INPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 31.675)), module, Uchoice::IN2_INPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 44.274)), module, Uchoice::IN3_INPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 56.874)), module, Uchoice::IN4_INPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 69.473)), module, Uchoice::IN5_INPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 82.072)), module, Uchoice::IN6_INPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 94.671)), module, Uchoice::IN7_INPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 109.034)), module, Uchoice::TRIG_INPUT));
+
+		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(31.447, 109.235)), module, Uchoice::OUT_OUTPUT));
+
+		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 19.12)), module, Uchoice::LED1_LIGHT));
+		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 31.715)), module, Uchoice::LED2_LIGHT));
+		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 44.31)), module, Uchoice::LED3_LIGHT));
+		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 56.905)), module, Uchoice::LED4_LIGHT));
+		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 69.5)), module, Uchoice::LED5_LIGHT));
+		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 82.095)), module, Uchoice::LED6_LIGHT));
+		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 94.69)), module, Uchoice::LED7_LIGHT));
 	}
 };
 
