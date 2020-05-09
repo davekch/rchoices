@@ -4,10 +4,6 @@
 
 struct Uchoice : Module {
 
-	int current = 0;
-	Chooser chooser = Chooser();
-	dsp::SchmittTrigger newInputTrigger;
-
 	enum ParamIds {
 		BUTTON1_PARAM,
 		BUTTON2_PARAM,
@@ -18,6 +14,7 @@ struct Uchoice : Module {
 		BUTTON7_PARAM,
 		NUM_PARAMS
 	};
+
 	enum InputIds {
 		IN1_INPUT,
 		IN2_INPUT,
@@ -41,26 +38,47 @@ struct Uchoice : Module {
 		LED5_LIGHT,
 		LED6_LIGHT,
 		LED7_LIGHT,
+		SELECTED1_LIGHT,
+		SELECTED2_LIGHT,
+		SELECTED3_LIGHT,
+		SELECTED4_LIGHT,
+		SELECTED5_LIGHT,
+		SELECTED6_LIGHT,
+		SELECTED7_LIGHT,
 		NUM_LIGHTS
 	};
 
+	int current = 0;
+	Chooser chooser = Chooser();
+	dsp::SchmittTrigger newInputTrigger;
+	bool selected[NUM_PARAMS] = {true, true, true, true, true, true, true};
+	dsp::SchmittTrigger buttonTriggers[NUM_PARAMS];
+
 	Uchoice() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-		configParam(BUTTON1_PARAM, 0.f, 1.f, 0.f, "");
-		configParam(BUTTON2_PARAM, 0.f, 1.f, 0.f, "");
-		configParam(BUTTON3_PARAM, 0.f, 1.f, 0.f, "");
-		configParam(BUTTON4_PARAM, 0.f, 1.f, 0.f, "");
-		configParam(BUTTON5_PARAM, 0.f, 1.f, 0.f, "");
-		configParam(BUTTON6_PARAM, 0.f, 1.f, 0.f, "");
-		configParam(BUTTON7_PARAM, 0.f, 1.f, 0.f, "");
+		configParam(BUTTON1_PARAM, 0.f, 1.f, 0.f);
+		configParam(BUTTON2_PARAM, 0.f, 1.f, 0.f);
+		configParam(BUTTON3_PARAM, 0.f, 1.f, 0.f);
+		configParam(BUTTON4_PARAM, 0.f, 1.f, 0.f);
+		configParam(BUTTON5_PARAM, 0.f, 1.f, 0.f);
+		configParam(BUTTON6_PARAM, 0.f, 1.f, 0.f);
+		configParam(BUTTON7_PARAM, 0.f, 1.f, 0.f);
 	}
 
 	void process(const ProcessArgs& args) override {
-		// collect all active inputs (for now, all of them)
+		// update state of buttons and
+		// collect the indices of all active inputs
 		std::vector<int> active;
-		for (int i=0; i<7; i++) {
-			active.push_back(i);
+		for (int i=0; i<NUM_PARAMS; i++) {
+			if (buttonTriggers[i].process(params[i].getValue())) {
+				selected[i] = !selected[i];
+			}
+			lights[i+NUM_PARAMS].value = (selected[i]);
+			if (selected[i]) {
+				active.push_back(i);
+			}
 		}
+
 		// calculate trigger value according to https://vcvrack.com/manual/VoltageStandards#triggers-and-gates
 		float trig = rescale(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f, 0.f, 1.f);
 		if (newInputTrigger.process(trig)) {
@@ -68,10 +86,15 @@ struct Uchoice : Module {
 			lights[current].setBrightness(0.f);
 			// update the selected input source
 			current = chooser.random_uniform_choice(&active);
-			// turn led for new input on
-			lights[current].setBrightness(1.f);
 		}
-		outputs[OUT_OUTPUT].setVoltage(inputs[current].getVoltage());
+		// turn led for new input on
+		lights[current].setBrightness(1.f);
+		// if there are any inputs selected, set the output accordingly
+		if (active.size() > 0) {
+			outputs[OUT_OUTPUT].setVoltage(inputs[current].getVoltage());
+		} else {
+			outputs[OUT_OUTPUT].setVoltage(0.f);
+		}
 	}
 };
 
@@ -86,13 +109,13 @@ struct UchoiceWidget : ModuleWidget {
 		addChild(createWidget<ScrewSilver>(Vec(RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 19.076)), module, Uchoice::BUTTON1_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 31.675)), module, Uchoice::BUTTON2_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 44.274)), module, Uchoice::BUTTON3_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 56.874)), module, Uchoice::BUTTON4_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 69.473)), module, Uchoice::BUTTON5_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 82.072)), module, Uchoice::BUTTON6_PARAM));
-		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(31.467, 94.671)), module, Uchoice::BUTTON7_PARAM));
+		addParam(createParamCentered<LEDButton>(mm2px(Vec(31.467, 19.076)), module, Uchoice::BUTTON1_PARAM));
+		addParam(createParamCentered<LEDButton>(mm2px(Vec(31.467, 31.675)), module, Uchoice::BUTTON2_PARAM));
+		addParam(createParamCentered<LEDButton>(mm2px(Vec(31.467, 44.274)), module, Uchoice::BUTTON3_PARAM));
+		addParam(createParamCentered<LEDButton>(mm2px(Vec(31.467, 56.874)), module, Uchoice::BUTTON4_PARAM));
+		addParam(createParamCentered<LEDButton>(mm2px(Vec(31.467, 69.473)), module, Uchoice::BUTTON5_PARAM));
+		addParam(createParamCentered<LEDButton>(mm2px(Vec(31.467, 82.072)), module, Uchoice::BUTTON6_PARAM));
+		addParam(createParamCentered<LEDButton>(mm2px(Vec(31.467, 94.671)), module, Uchoice::BUTTON7_PARAM));
 
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 19.076)), module, Uchoice::IN1_INPUT));
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(10.691, 31.675)), module, Uchoice::IN2_INPUT));
@@ -112,6 +135,14 @@ struct UchoiceWidget : ModuleWidget {
 		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 69.5)), module, Uchoice::LED5_LIGHT));
 		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 82.095)), module, Uchoice::LED6_LIGHT));
 		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 94.69)), module, Uchoice::LED7_LIGHT));
+
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(31.467, 19.076)), module, Uchoice::SELECTED1_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(31.467, 31.675)), module, Uchoice::SELECTED2_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(31.467, 44.274)), module, Uchoice::SELECTED3_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(31.467, 56.874)), module, Uchoice::SELECTED4_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(31.467, 69.473)), module, Uchoice::SELECTED5_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(31.467, 82.072)), module, Uchoice::SELECTED6_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(31.467, 94.671)), module, Uchoice::SELECTED7_LIGHT));
 	}
 };
 

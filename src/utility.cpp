@@ -7,7 +7,10 @@ Chooser::Chooser() {
 }
 
 int Chooser::random_uniform_choice(std::vector<int> *choices) {
- // return a randomly selected element from choices
+ // return a randomly selected element from choices or 0 if choices is empty
+ if (choices->size() == 0) {
+     return 0;
+ }
  std::uniform_int_distribution<int> dist(0, choices->size()-1);
  return choices->at(dist(generator));
 }
