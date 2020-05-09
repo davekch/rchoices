@@ -54,8 +54,15 @@ struct Uchoice : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
-		if (newInputTrigger.process(rescale(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f, 0.f, 1.f))) {
+		// calculate trigger value according to https://vcvrack.com/manual/VoltageStandards#triggers-and-gates
+		float trig = rescale(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f, 0.f, 1.f);
+		if (newInputTrigger.process(trig)) {
+			// turn the current light off
+			lights[current].setBrightness(0.f);
+			// update the selected input source
 			current = (current + 1) % 7;
+			// turn led for new input on
+			lights[current].setBrightness(1.f);
 		}
 		outputs[OUT_OUTPUT].setVoltage(inputs[current].getVoltage());
 	}
@@ -91,13 +98,13 @@ struct UchoiceWidget : ModuleWidget {
 
 		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(31.447, 109.235)), module, Uchoice::OUT_OUTPUT));
 
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 19.12)), module, Uchoice::LED1_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 31.715)), module, Uchoice::LED2_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 44.31)), module, Uchoice::LED3_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 56.905)), module, Uchoice::LED4_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 69.5)), module, Uchoice::LED5_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 82.095)), module, Uchoice::LED6_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 94.69)), module, Uchoice::LED7_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 19.12)), module, Uchoice::LED1_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 31.715)), module, Uchoice::LED2_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 44.31)), module, Uchoice::LED3_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 56.905)), module, Uchoice::LED4_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 69.5)), module, Uchoice::LED5_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 82.095)), module, Uchoice::LED6_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 94.69)), module, Uchoice::LED7_LIGHT));
 	}
 };
 
