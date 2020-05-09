@@ -3,6 +3,9 @@
 
 struct Uchoice : Module {
 
+	int current = 0;
+	dsp::SchmittTrigger newInputTrigger;
+
 	enum ParamIds {
 		NUM_PARAMS
 	};
@@ -30,6 +33,10 @@ struct Uchoice : Module {
 	}
 
 	void process(const ProcessArgs& args) override {
+		if (newInputTrigger.process(rescale(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f, 0.f, 1.f))) {
+			current = (current + 1) % 7;
+		}
+		outputs[OUT_OUTPUT].setVoltage(inputs[current].getVoltage());
 	}
 };
 
