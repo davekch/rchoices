@@ -33,6 +33,10 @@ struct Gchoice : Module {
 		NUM_LIGHTS
 	};
 
+	int current = 0;
+	Chooser chooser = Chooser();
+	dsp::SchmittTrigger newInputTrigger;
+
 	Gchoice() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 		configParam(MEAN_PARAM, 0.f, 6.f, 3.f, "");
@@ -51,6 +55,18 @@ struct Gchoice : Module {
 		for (int i=0; i<NUM_LIGHTS; i++) {
 			lights[i].value = gauss(float(i), mean, spread);
 		}
+		// select a new source on trigger
+		float trig = rescale(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f, 0.f, 1.f);
+		if (newInputTrigger.process(trig)) {
+			int choice = chooser.random_gaussian(mean, spread);
+			if (!(choice < 0 || choice > NUM_SOURCES)) {
+				current = SOURCE_INPUTS + choice;
+			}
+		}
+		// light up the corresponding LED
+		lights[current].value = 1.f;
+		// route input to output
+		outputs[OUT_OUTPUT].setVoltage(inputs[current].getVoltage());
 	}
 };
 
