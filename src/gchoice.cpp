@@ -82,7 +82,7 @@ struct GchoiceWidget : ModuleWidget {
 		addChild(createWidget<ScrewSilver>(Vec(box.size.x - 2 * RACK_GRID_WIDTH, RACK_GRID_HEIGHT - RACK_GRID_WIDTH)));
 
 		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(43.03, 22.211)), module, Gchoice::MEAN_ATT_PARAM));
-		addParam(createParam<LargeSlider>(mm2px(Vec(26.615, 15.296).plus(Vec(-2, 0))), module, Gchoice::MEAN_PARAM));
+		addParam(createParam<LargeSlider>(mm2px(Vec(26.615, 15.296)), module, Gchoice::MEAN_PARAM));
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(43.03, 58.208)), module, Gchoice::SPREAD_PARAM));
 		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(43.03, 70.665)), module, Gchoice::SPREAD_ATT_PARAM));
 
