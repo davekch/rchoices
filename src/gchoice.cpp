@@ -59,7 +59,7 @@ struct Gchoice : Module {
 		float trig = rescale(inputs[TRIG_INPUT].getVoltage(), 0.1f, 2.f, 0.f, 1.f);
 		if (newInputTrigger.process(trig)) {
 			int choice = chooser.random_gaussian(mean, spread);
-			if (!(choice < 0 || choice > NUM_SOURCES)) {
+			if (!(choice < 0 || choice >= NUM_SOURCES)) {
 				current = SOURCE_INPUTS + choice;
 			}
 		}
