@@ -20,6 +20,14 @@
       "tags": [
         "random"
       ]
+    },
+    {
+      "slug": "gchoice",
+      "name": "gchoice",
+      "description": "randomly select from inputs using a gaussian distribution",
+      "tags": [
+        "random"
+      ]
     }
   ]
 }
