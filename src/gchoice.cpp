@@ -35,17 +35,21 @@ struct Gchoice : Module {
 
 	Gchoice() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
-		configParam(MEAN_ATT_PARAM, 0.f, 1.f, 0.f, "");
 		configParam(MEAN_PARAM, 0.f, 6.f, 3.f, "");
+		configParam(MEAN_ATT_PARAM, 0.f, 0.6, 0.f, "");
 		configParam(SPREAD_PARAM, 0.5, 3.5, 2.f, "");
-		configParam(SPREAD_ATT_PARAM, 0.f, 1.f, 0.f, "");
+		configParam(SPREAD_ATT_PARAM, 0.f, 0.35, 0.f, "");
 	}
 
 	void process(const ProcessArgs& args) override {
-		float mean = params[MEAN_PARAM].getValue();
-		float var = params[SPREAD_PARAM].getValue();
+		// calculate mean and spread from knobs + attenuator * cv
+		float mean = params[MEAN_PARAM].getValue() + params[MEAN_ATT_PARAM].getValue() * inputs[MEAN_CV_INPUT].getVoltage();
+		float spread = params[SPREAD_PARAM].getValue() + params[SPREAD_ATT_PARAM].getValue() * inputs[SPREAD_CV_INPUT].getVoltage();
+		// make sure that mean and spread are not smaller / larger than their min/max values
+		mean = std::max(std::min(mean, 6.f), 0.f);
+		spread = std::max(std::min(spread, 3.5f), 0.5f);
 		for (int i=0; i<NUM_LIGHTS; i++) {
-			lights[i].value = gauss(float(i), mean, var);
+			lights[i].value = gauss(float(i), mean, spread);
 		}
 	}
 };
