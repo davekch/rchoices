@@ -9,3 +9,5 @@ public:
  Chooser();
  int random_uniform_choice(std::vector<int> *choices);
 };
+
+float gauss(float x, float mean, float sigma);

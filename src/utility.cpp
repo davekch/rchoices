@@ -14,3 +14,8 @@ int Chooser::random_uniform_choice(std::vector<int> *choices) {
  std::uniform_int_distribution<int> dist(0, choices->size()-1);
  return choices->at(dist(generator));
 }
+
+float gauss(float x, float mean, float sigma) {
+    // something proportional to a gauss distribution
+    return exp(-pow((x - mean), 2) / (2 * pow(sigma, 2)));
+}
