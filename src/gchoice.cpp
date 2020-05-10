@@ -1,5 +1,6 @@
 #include "plugin.hpp"
 
+const int NUM_SOURCES = 7;
 
 struct Gchoice : Module {
 	enum ParamIds {
@@ -10,15 +11,9 @@ struct Gchoice : Module {
 		NUM_PARAMS
 	};
 	enum InputIds {
-		IN1_INPUT,
-		IN2_INPUT,
+		ENUMS(SOURCE_INPUTS, NUM_SOURCES),
 		MEAN_CV_INPUT,
-		IN3_INPUT,
-		IN4_INPUT,
-		IN5_INPUT,
 		SPREAD_CV_INPUT,
-		IN6_INPUT,
-		IN7_INPUT,
 		TRIG_INPUT,
 		NUM_INPUTS
 	};
@@ -40,12 +35,17 @@ struct Gchoice : Module {
 	Gchoice() {
 		config(NUM_PARAMS, NUM_INPUTS, NUM_OUTPUTS, NUM_LIGHTS);
 		configParam(MEAN_ATT_PARAM, 0.f, 1.f, 0.f, "");
-		configParam(MEAN_PARAM, 0.f, 1.f, 0.f, "");
+		configParam(MEAN_PARAM, 6.f, 0.f, 3.f, "");
 		configParam(SPREAD_PARAM, 0.f, 1.f, 0.f, "");
 		configParam(SPREAD_ATT_PARAM, 0.f, 1.f, 0.f, "");
 	}
 
 	void process(const ProcessArgs& args) override {
+		for (int i=0; i<NUM_LIGHTS; i++) {
+			lights[i].value = 0.f;
+		}
+		float val = params[MEAN_PARAM].getValue();
+		lights[int(val)].value = 1.f;
 	}
 };
 
@@ -65,26 +65,26 @@ struct GchoiceWidget : ModuleWidget {
 		addParam(createParamCentered<RoundBlackKnob>(mm2px(Vec(43.03, 58.208)), module, Gchoice::SPREAD_PARAM));
 		addParam(createParamCentered<RoundSmallBlackKnob>(mm2px(Vec(43.03, 70.665)), module, Gchoice::SPREAD_ATT_PARAM));
 
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 19.076)), module, Gchoice::IN1_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 31.675)), module, Gchoice::IN2_INPUT));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 19.076)), module, Gchoice::SOURCE_INPUTS + 0));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 31.675)), module, Gchoice::SOURCE_INPUTS + 1));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 44.274)), module, Gchoice::SOURCE_INPUTS + 2));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 56.874)), module, Gchoice::SOURCE_INPUTS + 3));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 69.473)), module, Gchoice::SOURCE_INPUTS + 4));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 82.072)), module, Gchoice::SOURCE_INPUTS + 5));
+		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 94.671)), module, Gchoice::SOURCE_INPUTS + 6));
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(43.03, 32.418)), module, Gchoice::MEAN_CV_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 44.274)), module, Gchoice::IN3_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 56.874)), module, Gchoice::IN4_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 69.473)), module, Gchoice::IN5_INPUT));
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(43.03, 80.872)), module, Gchoice::SPREAD_CV_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 82.072)), module, Gchoice::IN6_INPUT));
-		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.749, 94.671)), module, Gchoice::IN7_INPUT));
 		addInput(createInputCentered<PJ301MPort>(mm2px(Vec(11.76, 109.034)), module, Gchoice::TRIG_INPUT));
 
 		addOutput(createOutputCentered<PJ301MPort>(mm2px(Vec(43.03, 109.034)), module, Gchoice::OUT_OUTPUT));
 
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 19.12)), module, Gchoice::LED1_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 31.715)), module, Gchoice::LED2_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 44.31)), module, Gchoice::LED3_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 56.905)), module, Gchoice::LED4_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 69.5)), module, Gchoice::LED5_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 82.095)), module, Gchoice::LED6_LIGHT));
-		addChild(createLightCentered<MediumLight<RedLight>>(mm2px(Vec(20.312, 94.69)), module, Gchoice::LED7_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 19.12)), module, Gchoice::LED1_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 31.715)), module, Gchoice::LED2_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 44.31)), module, Gchoice::LED3_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 56.905)), module, Gchoice::LED4_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 69.5)), module, Gchoice::LED5_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 82.095)), module, Gchoice::LED6_LIGHT));
+		addChild(createLightCentered<MediumLight<GreenLight>>(mm2px(Vec(20.312, 94.69)), module, Gchoice::LED7_LIGHT));
 	}
 };
 
