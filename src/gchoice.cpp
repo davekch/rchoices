@@ -33,7 +33,7 @@ struct Gchoice : Module {
 		NUM_LIGHTS
 	};
 
-	int current = 0;
+	int current = 3;
 	Chooser chooser = Chooser();
 	dsp::SchmittTrigger newInputTrigger;
 
