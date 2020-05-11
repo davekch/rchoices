@@ -33,7 +33,8 @@ Parameters and additional inputs:
  - `spread cv att`: attenuator for `spread cv`. The value of mean is `spread + attenuator * cv`
 
 
-<!-- ---
+---
+### Example usage
 <p align="center">
     <img src="screenshots/patch.png"/>
-</p> -->
+</p>
