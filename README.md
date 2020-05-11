@@ -1,4 +1,4 @@
-# rchoices --- random choice modules for VCV Rack
+# rchoices &mdash; random choice modules for VCV Rack
 <p align="center">
     <img src="screenshots/banner.png"/>
 </p>
@@ -8,7 +8,7 @@ This plugin currently contains two modules, uchoice and gchoice. Each module has
 A signal on the `trig`-input causes a new choice.
 
 
-## uchoice --- random uniform choice
+## uchoice &mdash; random uniform choice
 <p align="center">
     <img src="screenshots/uchoice.png" height="400"/>
 </p>
@@ -16,7 +16,7 @@ A signal on the `trig`-input causes a new choice.
 Chooses one of the inputs following a uniform distribution.
 You can exclude inputs by disabling them with the green buttons. The current choice is highlighted with a green LED.
 
-## gchoice --- random gaussian choice
+## gchoice &mdash; random gaussian choice
 <p align="center">
     <img src="screenshots/gchoice.png" height="400"/>
 </p>
